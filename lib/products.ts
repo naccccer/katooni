@@ -1,9 +1,33 @@
 import type { Product } from "./product-types";
+import { productImageSvg } from "./product-svg";
 
-// Product imagery uses Picsum (https://picsum.photos) with descriptive seeds.
-// Replace with generated product shots before final shipping.
-const img = (seed: string, w = 1600, h = 1600) =>
-  `https://picsum.photos/seed/${seed}/${w}/${h}`;
+// Product images are generated as on-brand SVG placeholders. Always load,
+// no external dependency. Replace with real photography before shipping.
+const img = (id: string, w = 1600, h = 1600) => {
+  // Use a synthetic product shape for image generation; category and colorway
+  // are derived from the id by productImageSvg's hashing.
+  const fake: Product = {
+    id,
+    slug: id,
+    name: id,
+    category: "running",
+    gender: "unisex",
+    price: 0,
+    currency: "USD",
+    colorways: [{ name: "Volt", hex: "#D7FF1E" }],
+    primaryHex: "#D7FF1E",
+    image: "",
+    imageAlt: "",
+    badge: null,
+    popularity: 0,
+    releasedAt: "2026-01-01",
+    sizes: [42],
+    short: "",
+    weightGrams: 0,
+    drop: 0,
+  };
+  return productImageSvg(fake, w, h);
+};
 
 export const products: Product[] = [
   {

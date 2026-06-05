@@ -1,12 +1,12 @@
-// Library: motion/react only. Hover state.
+// Library: motion/react only.
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { motion, useReducedMotion } from "motion/react";
 import { Price } from "@/components/primitives/Price";
 import { cn } from "@/lib/cn";
 import type { Product } from "@/lib/product-types";
+import { useLocale, useTranslations } from "next-intl";
 
 type ProductCardProps = {
   product: Product;
@@ -15,6 +15,8 @@ type ProductCardProps = {
 
 export function ProductCard({ product, className }: ProductCardProps) {
   const reduce = useReducedMotion();
+  const locale = useLocale();
+  const t = useTranslations("product");
 
   return (
     <motion.div
@@ -26,27 +28,25 @@ export function ProductCard({ product, className }: ProductCardProps) {
       )}
     >
       <Link
-        href={`/store?category=${product.category}`}
+        href={`/${locale}/store?category=${product.category}`}
         className="block"
         aria-label={`View ${product.name}`}
       >
         <div className="relative aspect-[4/5] w-full overflow-hidden">
-          <Image
+          <img
             src={product.image}
             alt={product.imageAlt}
-            fill
-            sizes="(max-width: 768px) 50vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-[1.06]"
+            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.06]"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-ink-0/50 via-transparent to-transparent" />
           {product.badge && (
-            <span className="absolute left-3 top-3 inline-flex items-center gap-1.5 rounded-pill bg-ink-0/70 px-3 py-1 text-[11px] font-mono uppercase tracking-[0.18em] text-paper-1 backdrop-blur-md">
+            <span className="absolute start-3 top-3 inline-flex items-center gap-1.5 rounded-pill bg-ink-0/70 px-3 py-1 text-[11px] font-mono uppercase tracking-[0.18em] text-paper-1 backdrop-blur-md">
               <span className="h-1.5 w-1.5 rounded-full bg-volt-500" />
               {product.badge === "new-drop"
-                ? "New drop"
+                ? t("newDrop")
                 : product.badge === "restock"
-                  ? "Restock"
-                  : "Last pairs"}
+                  ? t("restock")
+                  : t("lastPairs")}
             </span>
           )}
         </div>
@@ -55,7 +55,7 @@ export function ProductCard({ product, className }: ProductCardProps) {
             <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-paper-3">
               {product.category}
             </p>
-            <Price value={product.price} className="text-paper-1" />
+            <Price valueUsd={product.price} className="text-paper-1" />
           </div>
           <h3 className="font-display text-xl font-bold tracking-tighter text-paper-1 transition-colors group-hover:text-volt-500">
             {product.name}

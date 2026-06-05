@@ -1,22 +1,19 @@
-// Library: motion/react only. Scroll-driven backdrop.
+// Library: motion/react only.
 "use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "motion/react";
+import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { MobileNav } from "./MobileNav";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
-const navItems = [
-  { label: "Store", href: "/store" },
-  { label: "Running", href: "/store?category=running" },
-  { label: "Trail", href: "/store?category=trail" },
-  { label: "Track", href: "/store?category=track" },
-  { label: "Court", href: "/store?category=court" },
-  { label: "Lifestyle", href: "/store?category=lifestyle" },
-];
+type SiteHeaderProps = { locale: string };
 
-export function SiteHeader() {
+export function SiteHeader({ locale }: SiteHeaderProps) {
+  const t = useTranslations("nav");
+  const tCommon = useTranslations("common");
   const [scrolled, setScrolled] = useState(false);
   const [openMobile, setOpenMobile] = useState(false);
   const reduce = useReducedMotion();
@@ -29,6 +26,15 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
+  const items = [
+    { label: t("store"), href: `/${locale}/store` },
+    { label: t("running"), href: `/${locale}/store?category=running` },
+    { label: t("trail"), href: `/${locale}/store?category=trail` },
+    { label: t("track"), href: `/${locale}/store?category=track` },
+    { label: t("court"), href: `/${locale}/store?category=court` },
+    { label: t("lifestyle"), href: `/${locale}/store?category=lifestyle` },
+  ];
 
   return (
     <>
@@ -44,7 +50,7 @@ export function SiteHeader() {
       >
         <div className="container-x flex h-[72px] items-center justify-between gap-8">
           <Link
-            href="/"
+            href={`/${locale}`}
             className="group flex items-center gap-2 text-paper-1"
             aria-label="Katooni home"
           >
@@ -58,7 +64,7 @@ export function SiteHeader() {
             aria-label="Primary"
             className="hidden items-center gap-1 lg:flex"
           >
-            {navItems.map((item) => (
+            {items.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -77,17 +83,20 @@ export function SiteHeader() {
           </nav>
 
           <div className="flex items-center gap-2">
+            <div className="hidden md:block">
+              <LocaleSwitcher />
+            </div>
             <Link
-              href="/store"
+              href={`/${locale}/store`}
               className="hidden h-10 items-center justify-center rounded-pill border border-ink-3 px-4 text-sm text-paper-1 transition-colors hover:border-paper-2 hover:bg-ink-1 md:inline-flex"
             >
-              Find a pair
+              {tCommon("findPair")}
             </Link>
             <button
               type="button"
               onClick={() => setOpenMobile(true)}
               className="inline-flex h-10 w-10 items-center justify-center rounded-pill border border-ink-3 text-paper-1 transition-colors hover:border-paper-2 hover:bg-ink-1 lg:hidden"
-              aria-label="Open menu"
+              aria-label={tCommon("openMenu")}
             >
               <span aria-hidden className="block">
                 <svg width="18" height="12" viewBox="0 0 18 12" fill="none">
@@ -98,7 +107,12 @@ export function SiteHeader() {
           </div>
         </div>
       </motion.header>
-      <MobileNav open={openMobile} onClose={() => setOpenMobile(false)} items={navItems} />
+      <MobileNav
+        open={openMobile}
+        onClose={() => setOpenMobile(false)}
+        items={items}
+        locale={locale}
+      />
     </>
   );
 }

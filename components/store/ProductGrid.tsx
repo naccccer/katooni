@@ -1,4 +1,3 @@
-// Server component: pure render. Receives filtered list.
 import { ProductCard } from "./ProductCard";
 import { EmptyState } from "./EmptyState";
 import type { Product } from "@/lib/product-types";
@@ -6,9 +5,10 @@ import type { Product } from "@/lib/product-types";
 type ProductGridProps = {
   products: Product[];
   pending?: boolean;
+  locale: string;
 };
 
-export function ProductGrid({ products, pending }: ProductGridProps) {
+export function ProductGrid({ products, pending, locale }: ProductGridProps) {
   if (products.length === 0) {
     return (
       <div

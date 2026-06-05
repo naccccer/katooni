@@ -5,40 +5,18 @@ import { Container } from "@/components/primitives/Container";
 import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { FadeUp } from "@/components/motion/FadeUp";
 import { Footprints, Hand, Path, Pulse } from "@phosphor-icons/react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 
 const pillars = [
-  {
-    icon: Hand,
-    title: "Hand-lasted",
-    body: "Every upper is pulled over a last in our Kyoto workshop. Eight minutes per pair, by the same hand each time.",
-    span: "md:col-span-7",
-    accent: true,
-  },
-  {
-    icon: Path,
-    title: "One outsole, three surfaces",
-    body: "Pavement, packed dirt, indoor court. We change the lug. We do not change the shoe.",
-    span: "md:col-span-5",
-    accent: false,
-  },
-  {
-    icon: Pulse,
-    title: "Tuned to a 4 mm drop",
-    body: "Midfoot strike for most of us. We bias the geometry there and let the rest of the foot do what it does.",
-    span: "md:col-span-5",
-    accent: false,
-  },
-  {
-    icon: Footprints,
-    title: "Built to be re-soled",
-    body: "When the rubber goes, the upper does not. Send the pair back and we re-lace the outsole in fourteen days.",
-    span: "md:col-span-7",
-    accent: true,
-  },
+  { icon: Hand, key: "p1Title", bodyKey: "p1Body", span: "md:col-span-7", accent: true },
+  { icon: Path, key: "p2Title", bodyKey: "p2Body", span: "md:col-span-5", accent: false },
+  { icon: Pulse, key: "p3Title", bodyKey: "p3Body", span: "md:col-span-5", accent: false },
+  { icon: Footprints, key: "p4Title", bodyKey: "p4Body", span: "md:col-span-7", accent: true },
 ];
 
 export function BrandPillars() {
+  const t = useTranslations("pillars");
   return (
     <section
       aria-label="Brand pillars"
@@ -46,11 +24,11 @@ export function BrandPillars() {
     >
       <Container>
         <FadeUp>
-          <Eyebrow>What we believe</Eyebrow>
+          <Eyebrow>{t("eyebrow")}</Eyebrow>
         </FadeUp>
         <FadeUp delay={0.1}>
           <h2 className="text-display-lg font-display mt-4 max-w-[18ch] text-paper-1">
-            Four ideas. We hold them on purpose.
+            {t("title")}
           </h2>
         </FadeUp>
 
@@ -59,7 +37,7 @@ export function BrandPillars() {
             const Icon = pillar.icon;
             return (
               <FadeUp
-                key={pillar.title}
+                key={pillar.key}
                 delay={0.1 * i}
                 className={cn(
                   "group relative flex flex-col justify-between overflow-hidden rounded-card border border-ink-3 bg-ink-1 p-8 transition-colors hover:border-ink-3/0",
@@ -83,15 +61,15 @@ export function BrandPillars() {
                   </span>
                 </div>
                 <h3 className="font-display mt-10 text-3xl font-bold tracking-tighter text-paper-1 md:text-4xl">
-                  {pillar.title}
+                  {t(pillar.key)}
                 </h3>
                 <p className="mt-3 max-w-[44ch] text-sm text-paper-2 md:text-base">
-                  {pillar.body}
+                  {t(pillar.bodyKey)}
                 </p>
                 {pillar.accent && (
                   <div
                     aria-hidden
-                    className="pointer-events-none absolute -right-20 -top-20 h-72 w-72 rounded-full bg-volt-500/10 blur-3xl"
+                    className="pointer-events-none absolute -end-20 -top-20 h-72 w-72 rounded-full bg-volt-500/10 blur-3xl"
                   />
                 )}
               </FadeUp>

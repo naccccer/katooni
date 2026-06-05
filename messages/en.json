@@ -1,0 +1,174 @@
+{
+  "common": {
+    "shop": "Shop",
+    "browse": "Browse the catalog",
+    "findPair": "Find a pair",
+    "back": "Back",
+    "view": "View",
+    "readMore": "Read more",
+    "filter": "Filter",
+    "filters": "Filters",
+    "reset": "Reset",
+    "apply": "Apply filters",
+    "close": "Close",
+    "menu": "Menu",
+    "openMenu": "Open menu"
+  },
+  "nav": {
+    "store": "Store",
+    "running": "Running",
+    "trail": "Trail",
+    "track": "Track",
+    "court": "Court",
+    "lifestyle": "Lifestyle"
+  },
+  "footer": {
+    "tagline": "Footwear for the ones who run first. Built in Kyoto, run everywhere.",
+    "shop": "Shop",
+    "help": "Help",
+    "about": "About",
+    "connect": "Connect",
+    "helpLinks": {
+      "sizing": "Sizing",
+      "shipping": "Shipping",
+      "returns": "Returns",
+      "care": "Care guide",
+      "warranty": "Warranty"
+    },
+    "aboutLinks": {
+      "lab": "The lab",
+      "materials": "Materials",
+      "press": "Press",
+      "careers": "Careers",
+      "stockists": "Stockists"
+    },
+    "connectLinks": {
+      "instagram": "Instagram",
+      "strava": "Strava club",
+      "newsletter": "Newsletter",
+      "support": "Support"
+    },
+    "copyright": "© 2026 Katooni Athletic Co. All rights reserved.",
+    "madeIn": "Made to be run in",
+    "location": "JP / Kyoto"
+  },
+  "hero": {
+    "eyebrow": "Drop 014 - Volt Series",
+    "line1": "Run",
+    "line2": "first.",
+    "line3": "Volt 02.",
+    "sub": "Carbon-plated, volt-soled, and built for the long mile. Engineered in Kyoto. Tested on the first cold morning of the year.",
+    "ctaPrimary": "Shop the drop",
+    "ctaSecondary": "Browse the catalog",
+    "tag": "Cat Runner 02",
+    "priceTag": "Volt 02 / $285",
+    "specDrop": "Drop",
+    "specWeight": "Weight",
+    "specPlate": "Plate",
+    "specDropValue": "4 mm",
+    "specWeightValue": "198 g",
+    "specPlateValue": "Carbon"
+  },
+  "marquee": {
+    "items": [
+      "New drop 014 - Volt Series",
+      "Free shipping over $200",
+      "Built in Kyoto",
+      "Run log v0.4.0",
+      "30-day return window",
+      "Stockists in 12 cities"
+    ]
+  },
+  "featured": {
+    "eyebrow": "02 / Drop",
+    "tag": "Featured drop",
+    "labelPrice": "Price",
+    "labelWeight": "Weight",
+    "labelDrop": "Drop",
+    "body": "Available in three colorways. Limited first run of 1,200 pairs. Each pair is individually numbered on the medial heel.",
+    "cta": "Shop the drop",
+    "readSpec": "Read the spec sheet"
+  },
+  "editorial": {
+    "step1Eyebrow": "01 / Build",
+    "step1Title": "An upper that disappears on the foot.",
+    "step1Body": "Single-piece engineered knit, knit-in gusset, zero overlays at the midfoot. The foot is the only thing inside the shoe.",
+    "step1Accent": "Engineered knit upper",
+    "step2Eyebrow": "02 / Foam",
+    "step2Title": "Supercritical midsole, 38 mm of it.",
+    "step2Body": "Two-density supercritical foam, 38 mm heel, 34 mm forefoot, 4 mm drop. Tuned to return the energy you put in, with a quietness underfoot that hides the work.",
+    "step2Accent": "Supercritical midsole",
+    "step3Eyebrow": "03 / Outsole",
+    "step3Title": "Volt rubber, lugged where it counts.",
+    "step3Body": "Our own volt rubber compound, lugged for pavement and packed dirt. Coverage maps to where the foot actually loads, not where the camera looks.",
+    "step3Accent": "Volt rubber outsole"
+  },
+  "pillars": {
+    "eyebrow": "What we believe",
+    "title": "Four ideas. We hold them on purpose.",
+    "p1Title": "Hand-lasted",
+    "p1Body": "Every upper is pulled over a last in our Kyoto workshop. Eight minutes per pair, by the same hand each time.",
+    "p2Title": "One outsole, three surfaces",
+    "p2Body": "Pavement, packed dirt, indoor court. We change the lug. We do not change the shoe.",
+    "p3Title": "Tuned to a 4 mm drop",
+    "p3Body": "Midfoot strike for most of us. We bias the geometry there and let the rest of the foot do what it does.",
+    "p4Title": "Built to be re-soled",
+    "p4Body": "When the rubber goes, the upper does not. Send the pair back and we re-lace the outsole in fourteen days."
+  },
+  "preview": {
+    "eyebrow": "03 / Catalog",
+    "title": "Twelve pairs. Each one earned its place.",
+    "viewStore": "View the store"
+  },
+  "manifesto": {
+    "eyebrow": "04 / The why",
+    "lines": [
+      "We started Katooni",
+      "because every sneaker",
+      "we ran in lied",
+      "to us about weight."
+    ],
+    "cta": "Find your pair"
+  },
+  "store": {
+    "eyebrow": "01 / Store",
+    "title": "The full catalog",
+    "sort": "Sort",
+    "sortNewest": "Newest",
+    "sortPopularity": "Most popular",
+    "sortPriceAsc": "Price, low to high",
+    "sortPriceDesc": "Price, high to low",
+    "filterCategory": "Category",
+    "filterGender": "Gender",
+    "filterSize": "Size (EU)",
+    "filterColor": "Color",
+    "filterPrice": "Price",
+    "category": {
+      "running": "Running",
+      "trail": "Trail",
+      "track": "Track",
+      "court": "Court",
+      "lifestyle": "Lifestyle"
+    },
+    "gender": {
+      "mens": "Mens",
+      "womens": "Womens",
+      "unisex": "Unisex"
+    },
+    "resultCount": "{shown} / {total} pairs",
+    "empty": "Nothing in the catalog fits that.",
+    "emptyBody": "Try removing a filter, or take a look at the full set of pairs.",
+    "resetFilters": "Reset filters"
+  },
+  "product": {
+    "newDrop": "New drop",
+    "restock": "Restock",
+    "lastPairs": "Last pairs"
+  },
+  "notFound": {
+    "eyebrow": "404 / Off the route",
+    "title": "This page is between kilometers.",
+    "body": "The link you followed has been moved or never existed. Head back to the front door and we will point you somewhere useful.",
+    "back": "Back to home"
+  }
+}

@@ -1,30 +1,15 @@
 // Library: motion/react only.
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { useCallback } from "react";
 import {
   filtersToSearchParams,
   isDefault,
   type FilterState,
 } from "@/lib/filters";
-import { Eyebrow } from "@/components/primitives/Eyebrow";
 import { cn } from "@/lib/cn";
-import type { Category, Gender } from "@/lib/product-types";
-
-const CATEGORIES: { value: Category; label: string }[] = [
-  { value: "running", label: "Running" },
-  { value: "trail", label: "Trail" },
-  { value: "track", label: "Track" },
-  { value: "court", label: "Court" },
-  { value: "lifestyle", label: "Lifestyle" },
-];
-
-const GENDERS: { value: Gender; label: string }[] = [
-  { value: "mens", label: "Mens" },
-  { value: "womens", label: "Womens" },
-  { value: "unisex", label: "Unisex" },
-];
+import { useTranslations } from "next-intl";
 
 const SIZES = [36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46];
 
@@ -42,6 +27,7 @@ type FilterRailProps = {
   className?: string;
   variant?: "rail" | "sheet";
   onApply?: () => void;
+  locale: string;
 };
 
 export function FilterRail({
@@ -49,17 +35,20 @@ export function FilterRail({
   className,
   variant = "rail",
   onApply,
+  locale,
 }: FilterRailProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const t = useTranslations("store");
+  const tCommon = useTranslations("common");
 
-  // Build a new URL from current filters + a single change.
   const update = useCallback(
     (next: FilterState) => {
       const params = filtersToSearchParams(next);
       const qs = params.toString();
-      router.replace(qs ? `/store?${qs}` : "/store", { scroll: false });
+      router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
     },
-    [router],
+    [router, pathname],
   );
 
   const toggle = <K extends "category" | "gender" | "size" | "color">(
@@ -73,33 +62,47 @@ export function FilterRail({
   };
 
   const reset = () => {
-    router.replace("/store", { scroll: false });
+    router.replace(pathname, { scroll: false });
   };
+
+  const categories = [
+    { value: "running" as const, label: t("category.running") },
+    { value: "trail" as const, label: t("category.trail") },
+    { value: "track" as const, label: t("category.track") },
+    { value: "court" as const, label: t("category.court") },
+    { value: "lifestyle" as const, label: t("category.lifestyle") },
+  ];
+
+  const genders = [
+    { value: "mens" as const, label: t("gender.mens") },
+    { value: "womens" as const, label: t("gender.womens") },
+    { value: "unisex" as const, label: t("gender.unisex") },
+  ];
 
   return (
     <aside
       className={cn(
         variant === "rail"
-          ? "sticky top-[88px] hidden h-[calc(100dvh-104px)] w-[280px] flex-shrink-0 overflow-y-auto border-r border-ink-3 pr-6 lg:block"
+          ? "sticky top-[88px] hidden h-[calc(100dvh-104px)] w-[280px] flex-shrink-0 overflow-y-auto border-e border-ink-3 ps-6 lg:block"
           : "flex h-full flex-col gap-8",
         className,
       )}
     >
       <div className="flex items-center justify-between">
-        <Eyebrow>Filters</Eyebrow>
+        <p className="eyebrow">{tCommon("filters")}</p>
         <button
           type="button"
           onClick={reset}
           disabled={isDefault(filters)}
           className="font-mono text-[11px] uppercase tracking-[0.18em] text-paper-3 transition-colors hover:text-volt-500 disabled:opacity-30"
         >
-          Reset
+          {tCommon("reset")}
         </button>
       </div>
 
-      <FilterSection title="Category">
+      <FilterSection title={t("filterCategory")}>
         <div className="space-y-1">
-          {CATEGORIES.map((c) => (
+          {categories.map((c) => (
             <CheckRow
               key={c.value}
               label={c.label}
@@ -110,9 +113,9 @@ export function FilterRail({
         </div>
       </FilterSection>
 
-      <FilterSection title="Gender">
+      <FilterSection title={t("filterGender")}>
         <div className="flex flex-wrap gap-1.5">
-          {GENDERS.map((g) => {
+          {genders.map((g) => {
             const active = filters.gender.includes(g.value);
             return (
               <button
@@ -133,7 +136,7 @@ export function FilterRail({
         </div>
       </FilterSection>
 
-      <FilterSection title="Size (EU)">
+      <FilterSection title={t("filterSize")}>
         <div className="grid grid-cols-6 gap-1.5">
           {SIZES.map((s) => {
             const active = filters.size.includes(s);
@@ -156,7 +159,7 @@ export function FilterRail({
         </div>
       </FilterSection>
 
-      <FilterSection title="Color">
+      <FilterSection title={t("filterColor")}>
         <div className="flex flex-wrap gap-2">
           {COLORS.map((c) => {
             const active = filters.color.includes(c.hex);
@@ -179,11 +182,11 @@ export function FilterRail({
         </div>
       </FilterSection>
 
-      <FilterSection title="Price">
+      <FilterSection title={t("filterPrice")}>
         <div className="flex items-center gap-3 font-mono text-sm text-paper-1">
-          <span>${filters.priceMin}</span>
+          <span>{filters.priceMin}</span>
           <span aria-hidden className="h-px flex-1 bg-ink-3" />
-          <span>${filters.priceMax}</span>
+          <span>{filters.priceMax}</span>
         </div>
         <div className="mt-3 flex gap-2">
           <input
@@ -225,7 +228,7 @@ export function FilterRail({
             onClick={onApply}
             className="inline-flex h-12 w-full items-center justify-center rounded-pill bg-volt-500 text-sm font-medium text-ink-0 transition-colors hover:bg-volt-600"
           >
-            Apply filters
+            {tCommon("apply")}
           </button>
         </div>
       )}

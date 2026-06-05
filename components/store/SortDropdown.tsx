@@ -1,17 +1,11 @@
-// Library: motion/react only. Native-feeling custom select.
+// Library: motion/react only.
 "use client";
 
 import { motion, AnimatePresence, useReducedMotion } from "motion/react";
 import { useState, useRef, useEffect } from "react";
+import { useTranslations } from "next-intl";
 import type { FilterState } from "@/lib/filters";
 import { cn } from "@/lib/cn";
-
-const options: { value: FilterState["sort"]; label: string }[] = [
-  { value: "newest", label: "Newest" },
-  { value: "popularity", label: "Most popular" },
-  { value: "price-asc", label: "Price, low to high" },
-  { value: "price-desc", label: "Price, high to low" },
-];
 
 type SortDropdownProps = {
   value: FilterState["sort"];
@@ -22,6 +16,7 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
   const [open, setOpen] = useState(false);
   const reduce = useReducedMotion();
   const ref = useRef<HTMLDivElement>(null);
+  const t = useTranslations("store");
 
   useEffect(() => {
     function onDoc(e: MouseEvent) {
@@ -31,6 +26,13 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
     document.addEventListener("mousedown", onDoc);
     return () => document.removeEventListener("mousedown", onDoc);
   }, []);
+
+  const options: { value: FilterState["sort"]; label: string }[] = [
+    { value: "newest", label: t("sortNewest") },
+    { value: "popularity", label: t("sortPopularity") },
+    { value: "price-asc", label: t("sortPriceAsc") },
+    { value: "price-desc", label: t("sortPriceDesc") },
+  ];
 
   const current = options.find((o) => o.value === value) ?? options[0];
 
@@ -44,7 +46,7 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
         className="inline-flex h-11 items-center gap-2 rounded-pill border border-ink-3 px-5 text-sm text-paper-1 transition-colors hover:border-paper-2 hover:bg-ink-1"
       >
         <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-paper-3">
-          Sort
+          {t("sort")}
         </span>
         <span>{current.label}</span>
         <svg
@@ -66,7 +68,7 @@ export function SortDropdown({ value, onChange }: SortDropdownProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 z-30 mt-2 w-60 overflow-hidden rounded-card border border-ink-3 bg-ink-1 py-1"
+            className="absolute end-0 z-30 mt-2 w-60 overflow-hidden rounded-card border border-ink-3 bg-ink-1 py-1"
           >
             {options.map((o) => (
               <li key={o.value}>

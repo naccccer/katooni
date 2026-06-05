@@ -1,30 +1,20 @@
 import { cn } from "@/lib/cn";
+import { formatPrice } from "@/lib/pricing";
+import { useLocale } from "next-intl";
 
 type PriceProps = {
-  value: number;
-  currency?: "USD";
+  valueUsd: number;
   className?: string;
   size?: "sm" | "md" | "lg";
 };
 
-export function Price({
-  value,
-  currency = "USD",
-  className,
-  size = "md",
-}: PriceProps) {
+export function Price({ valueUsd, className, size = "md" }: PriceProps) {
+  const locale = useLocale();
   const sizeClass =
     size === "sm" ? "text-sm" : size === "lg" ? "text-2xl font-semibold" : "text-base";
-
-  const formatted = new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency,
-    maximumFractionDigits: 0,
-  }).format(value);
-
   return (
-    <span className={cn("font-mono tabular-nums", sizeClass, className)}>
-      {formatted}
+    <span className={cn("tabular-nums", sizeClass, className)}>
+      {formatPrice(valueUsd, locale)}
     </span>
   );
 }

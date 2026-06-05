@@ -20,9 +20,11 @@
   --color-signal-err: #ff4d4d;
 
   /* Fonts */
-  --font-display: var(--font-cabinet), "Cabinet Grotesk", system-ui, sans-serif;
-  --font-sans: var(--font-geist), "Geist", system-ui, sans-serif;
-  --font-mono: var(--font-geist-mono), "Geist Mono", ui-monospace, monospace;
+  --font-display: var(--font-cabinet), system-ui, sans-serif;
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-fa: "Vazirmatn", "Doran", "Tahoma", sans-serif;
+  --font-doran: "Doran", "Tahoma", sans-serif;
 
   /* Radii: locked scale */
   --radius-pill: 9999px;
@@ -49,6 +51,15 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+  }
+
+  html[dir="rtl"] body,
+  html[lang="fa"] body {
+    font-family: var(--font-fa);
+  }
+
+  html[lang="fa"] .font-display {
+    font-family: var(--font-doran);
   }
 
   body {
@@ -78,8 +89,17 @@
     letter-spacing: -0.02em;
   }
 
+  html[lang="fa"] .font-display {
+    font-family: var(--font-fa);
+    letter-spacing: 0;
+  }
+
   .font-mono {
     font-family: var(--font-mono);
+  }
+
+  html[lang="fa"] .font-mono {
+    font-family: var(--font-fa);
   }
 
   .container-x {
@@ -95,6 +115,11 @@
     text-transform: uppercase;
     letter-spacing: 0.18em;
     color: var(--color-paper-3);
+  }
+
+  html[lang="fa"] .eyebrow {
+    font-family: var(--font-fa);
+    letter-spacing: 0;
   }
 
   .text-display-xl {
@@ -119,6 +144,14 @@
     font-size: clamp(28px, 3.4vw, 56px);
     line-height: 1.02;
     letter-spacing: -0.025em;
+  }
+
+  html[lang="fa"] .text-display-xl,
+  html[lang="fa"] .text-display-lg,
+  html[lang="fa"] .text-display-md {
+    font-family: var(--font-fa);
+    letter-spacing: 0;
+    line-height: 1.05;
   }
 
   .hairline {

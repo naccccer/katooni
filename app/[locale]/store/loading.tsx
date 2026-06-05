@@ -1,4 +1,3 @@
-// Skeleton state for the store route. Matches final layout.
 import { Container } from "@/components/primitives/Container";
 
 export default function StoreLoading() {

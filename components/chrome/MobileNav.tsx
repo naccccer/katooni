@@ -1,10 +1,12 @@
-// Library: motion/react only. Sheet open/close animation.
+// Library: motion/react only.
 "use client";
 
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
+import { LocaleSwitcher } from "./LocaleSwitcher";
 
 type Item = { label: string; href: string };
 
@@ -12,10 +14,13 @@ type MobileNavProps = {
   open: boolean;
   onClose: () => void;
   items: Item[];
+  locale: string;
 };
 
-export function MobileNav({ open, onClose, items }: MobileNavProps) {
+export function MobileNav({ open, onClose, items, locale }: MobileNavProps) {
   const reduce = useReducedMotion();
+  const tCommon = useTranslations("common");
+  const tNav = useTranslations("nav");
 
   useEffect(() => {
     if (!open) return;
@@ -39,7 +44,7 @@ export function MobileNav({ open, onClose, items }: MobileNavProps) {
           <button
             type="button"
             onClick={onClose}
-            aria-label="Close menu"
+            aria-label={tCommon("close")}
             className="absolute inset-0 bg-ink-0/80 backdrop-blur-md"
           />
           <motion.div
@@ -57,7 +62,7 @@ export function MobileNav({ open, onClose, items }: MobileNavProps) {
                 type="button"
                 onClick={onClose}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-pill border border-ink-3 text-paper-1"
-                aria-label="Close menu"
+                aria-label={tCommon("close")}
               >
                 <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <path
@@ -90,14 +95,18 @@ export function MobileNav({ open, onClose, items }: MobileNavProps) {
               ))}
             </nav>
 
-            <div className="container-x pb-12">
+            <div className="container-x flex flex-col gap-4 pb-12">
+              <LocaleSwitcher />
               <Link
-                href="/store"
+                href={`/${locale}/store`}
                 onClick={onClose}
                 className="inline-flex h-12 items-center justify-center rounded-pill bg-volt-500 px-6 text-sm font-medium text-ink-0 transition-colors hover:bg-volt-600"
               >
-                Find a pair
+                {tCommon("findPair")}
               </Link>
+              <span className="font-mono text-xs uppercase tracking-[0.18em] text-paper-3">
+                {tNav("store")}
+              </span>
             </div>
           </motion.div>
         </motion.div>

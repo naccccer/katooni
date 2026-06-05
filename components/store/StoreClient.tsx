@@ -58,9 +58,10 @@ function applyFilters(filters: FilterState): Product[] {
 
 type StoreClientProps = {
   filters: FilterState;
+  locale: string;
 };
 
-export function StoreClient({ filters }: StoreClientProps) {
+export function StoreClient({ filters, locale }: StoreClientProps) {
   const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pending, startTransition] = useTransition();
@@ -71,7 +72,7 @@ export function StoreClient({ filters }: StoreClientProps) {
     const params = filtersToSearchParams(next);
     const qs = params.toString();
     startTransition(() => {
-      router.replace(qs ? `/store?${qs}` : "/store", { scroll: false });
+      router.replace(qs ? `/${locale}/store?${qs}` : `/${locale}/store`, { scroll: false });
     });
   }
 
@@ -91,9 +92,9 @@ export function StoreClient({ filters }: StoreClientProps) {
 
       <div className="container-x py-12">
         <div className="flex gap-10">
-          <FilterRail filters={filters} />
+          <FilterRail filters={filters} locale={locale} />
           <div className="flex-1">
-            <ProductGrid products={filtered} pending={pending} />
+            <ProductGrid products={filtered} pending={pending} locale={locale} />
           </div>
         </div>
       </div>
@@ -102,6 +103,7 @@ export function StoreClient({ filters }: StoreClientProps) {
         open={mobileOpen}
         onClose={() => setMobileOpen(false)}
         filters={filters}
+        locale={locale}
       />
     </>
   );

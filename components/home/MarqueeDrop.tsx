@@ -3,17 +3,11 @@
 
 import { KineticMarquee } from "@/components/motion/KineticMarquee";
 import { Lightning } from "@phosphor-icons/react";
-
-const items = [
-  "New drop 014 - Volt Series",
-  "Free shipping over $200",
-  "Built in Kyoto",
-  "Run log v0.4.0",
-  "30-day return window",
-  "Stockists in 12 cities",
-];
+import { useLocale, useTranslations } from "next-intl";
 
 export function MarqueeDrop() {
+  const t = useTranslations("marquee");
+  const items = t.raw("items") as string[];
   return (
     <section
       aria-label="Drop announcements"

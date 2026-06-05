@@ -6,17 +6,14 @@ import { useRef } from "react";
 import { Container } from "@/components/primitives/Container";
 import { Button } from "@/components/primitives/Button";
 import { ArrowUpRight } from "@phosphor-icons/react";
-
-const lines = [
-  "We started Katooni",
-  "because every sneaker",
-  "we ran in lied",
-  "to us about weight.",
-];
+import { useLocale, useTranslations } from "next-intl";
 
 export function ManifestoBlock() {
   const ref = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
+  const t = useTranslations("manifesto");
+  const locale = useLocale();
+  const lines = t.raw("lines") as string[];
 
   return (
     <section
@@ -25,7 +22,7 @@ export function ManifestoBlock() {
       className="relative bg-ink-0 py-24 md:py-40"
     >
       <Container className="max-w-[1000px]">
-        <p className="eyebrow mb-10 text-paper-3">04 / The why</p>
+        <p className="eyebrow mb-10 text-paper-3">{t("eyebrow")}</p>
         <h2 className="text-display-lg font-display text-paper-1">
           {lines.map((line, i) => (
             <span key={i} className="block overflow-hidden">
@@ -51,8 +48,8 @@ export function ManifestoBlock() {
         </h2>
 
         <div className="mt-16 flex flex-wrap items-center gap-4">
-          <Button href="/store" size="lg">
-            Find your pair
+          <Button href={`/${locale}/store`} size="lg">
+            {t("cta")}
             <ArrowUpRight size={18} weight="bold" />
           </Button>
           <span className="font-mono text-xs uppercase tracking-[0.18em] text-paper-3">
