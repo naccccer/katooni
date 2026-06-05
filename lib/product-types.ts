@@ -7,6 +7,25 @@ export type Category =
 
 export type Gender = "mens" | "womens" | "unisex";
 
+export type Brand =
+  | "katooni"
+  | "nike"
+  | "adidas"
+  | "on"
+  | "asics"
+  | "newbalance"
+  | "hoka";
+
+export const BRAND_LABELS: Record<Brand, string> = {
+  katooni: "Katooni",
+  nike: "Nike",
+  adidas: "Adidas",
+  on: "On",
+  asics: "Asics",
+  newbalance: "New Balance",
+  hoka: "Hoka",
+};
+
 export type Colorway = {
   name: string;
   hex: string;
@@ -16,6 +35,7 @@ export type Product = {
   id: string;
   slug: string;
   name: string;
+  brand: Brand;
   category: Category;
   gender: Gender;
   price: number;

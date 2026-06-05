@@ -1,20 +1,43 @@
 /* Self-hosted Farsi fonts from /public/fonts.
-   - Doran: display, bold only (one weight), used for headlines
-   - Vazirmatn: body, all weights, used for paragraphs, UI, mono labels
+   - Kalameh: display, headings, hero copy (thin, regular, bold, black)
+   - Vazirmatn: body, UI, mono labels (all 9 weights)
+
+   Naming: the Farsi system uses these weights in Farsi text.
+   Kalameh ships with 4 weights, mapped to standard 100/400/700/900.
 */
 
 @font-face {
-  font-family: "Doran";
-  src: url("/fonts/Doran-Bold.woff2") format("woff2");
+  font-family: "Kalameh";
+  src: url("/fonts/Kalameh-Thin.woff2") format("woff2");
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Kalameh";
+  src: url("/fonts/Kalameh-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Kalameh";
+  src: url("/fonts/Kalameh-Bold.woff2") format("woff2");
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
-  font-family: "Doran Fallback";
+  font-family: "Kalameh";
+  src: url("/fonts/Kalameh-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Kalameh Fallback";
   src: local("Tahoma Bold"), local("Tahoma");
-  font-weight: 700;
+  font-weight: 100 900;
   font-display: swap;
 }
 

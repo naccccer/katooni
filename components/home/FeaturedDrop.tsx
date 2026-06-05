@@ -1,7 +1,6 @@
 // Library: motion/react only.
 "use client";
 
-import Image from "next/image";
 import { motion, useScroll, useTransform, useReducedMotion } from "motion/react";
 import { useRef } from "react";
 import Link from "next/link";

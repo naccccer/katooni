@@ -1,6 +1,17 @@
-// Generate a deterministic, on-brand SVG placeholder for a product image.
-// Returns a data URL. Always loads, no external dependency, on-brand.
+// High-fidelity shoe silhouette SVG generator.
+// Each category gets a distinct, recognizable side-profile silhouette.
+// Volt accent (#D7FF1E) on dark ink background. Always loads, no network.
 import type { Product } from "./product-types";
+
+const INK_0 = "#0A0A0B";
+const INK_1 = "#101013";
+const INK_2 = "#161619";
+const INK_3 = "#1F1F24";
+const INK_4 = "#2A2A30";
+const VOLT = "#D7FF1E";
+const VOLT_DIM = "#8FA012";
+const PAPER_2 = "#A8A8A4";
+const PAPER_3 = "#6E6E6A";
 
 function hashString(s: string): number {
   let h = 5381;
@@ -9,273 +20,436 @@ function hashString(s: string): number {
 }
 
 function pickAccent(seed: number, colorways: { hex: string }[]): string {
-  // Prefer volt if present, else the first colorway.
   const volt = colorways.find((c) => c.hex.toLowerCase() === "#d7ff1e");
-  if (volt) return volt.hex;
-  return colorways[seed % colorways.length]?.hex ?? "#D7FF1E";
+  if (volt) return VOLT;
+  return colorways[seed % colorways.length]?.hex ?? VOLT;
+}
+
+// Build a side-profile shoe silhouette based on type.
+// All paths draw at viewBox -400 -200 800 400 (centered). The renderer
+// will scale to fit the 1600x1600 canvas.
+
+function runnerPath(accent: string): string {
+  // Modern running shoe profile (like a Pegasus / Vaporfly silhouette).
+  return `
+    <g>
+      <!-- sole shadow -->
+      <ellipse cx="0" cy="120" rx="320" ry="14" fill="#000" opacity="0.5"/>
+      <!-- midsole (white-ish foam wedge) -->
+      <path d="M -320 90
+               C -330 60, -320 30, -290 20
+               C -200 0, -80 -10, 40 -20
+               C 160 -28, 270 -10, 320 30
+               C 350 60, 340 100, 310 110
+               L -290 110
+               C -310 110, -325 105, -320 90 Z"
+            fill="${INK_3}" stroke="${INK_4}" stroke-width="1.5"/>
+      <!-- volt accent stripe along midsole -->
+      <path d="M -290 60
+               C -200 40, -80 30, 40 20
+               C 160 10, 270 25, 310 55"
+            fill="none" stroke="${accent}" stroke-width="4" opacity="0.95"/>
+      <path d="M -290 50
+               C -200 30, -80 20, 40 10
+               C 160 0, 270 15, 310 45"
+            fill="none" stroke="${accent}" stroke-width="2" opacity="0.45"/>
+      <!-- upper main panel -->
+      <path d="M -280 20
+               C -300 -10, -290 -50, -260 -80
+               C -200 -110, -120 -130, -40 -140
+               C 60 -148, 160 -150, 240 -130
+               C 290 -110, 310 -70, 305 -30
+               C 300 0, 280 20, 240 25
+               L -260 25
+               C -275 25, -285 22, -280 20 Z"
+            fill="${INK_1}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- toe cap (front curved section) -->
+      <path d="M 220 -120
+               C 270 -100, 305 -60, 305 -20
+               C 305 5, 285 22, 250 25
+               C 220 26, 200 20, 195 0
+               C 192 -40, 200 -90, 220 -120 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- heel cup -->
+      <path d="M -290 0
+               C -310 -10, -315 -50, -300 -80
+               C -280 -110, -240 -125, -200 -130
+               C -180 -132, -170 -120, -175 -100
+               C -180 -70, -200 -30, -240 -10
+               C -270 5, -290 8, -290 0 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- tongue (slight raised panel) -->
+      <path d="M -50 -130
+               C -50 -160, 0 -170, 60 -168
+               C 110 -166, 130 -150, 125 -130
+               C 120 -110, 80 -100, 30 -100
+               C -10 -100, -50 -110, -50 -130 Z"
+            fill="${INK_1}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- collar padding (ankle opening) -->
+      <ellipse cx="0" cy="-140" rx="80" ry="22" fill="${INK_0}" stroke="${INK_3}" stroke-width="1.5"/>
+      <ellipse cx="0" cy="-140" rx="68" ry="14" fill="${INK_1}"/>
+      <!-- lace eyelets (4 pairs) -->
+      ${[-40, 0, 40, 80]
+        .map(
+          (x) =>
+            `<circle cx="${x}" cy="-130" r="4" fill="${INK_0}" stroke="${accent}" stroke-width="1.5"/>` +
+            `<circle cx="${x + 10}" cy="-120" r="4" fill="${INK_0}" stroke="${accent}" stroke-width="1.5"/>`,
+        )
+        .join("")}
+      <!-- lace crisscross -->
+      <path d="M -40 -130 L 10 -120 M 0 -130 L 50 -120 M 40 -130 L 90 -120 M 80 -130 L 130 -120"
+            stroke="${accent}" stroke-width="1.5" opacity="0.6"/>
+      <!-- volt heel tab -->
+      <rect x="-310" y="-70" width="14" height="22" rx="3" fill="${accent}"/>
+      <!-- mesh perforation dots on upper -->
+      ${Array.from({ length: 18 })
+        .map((_, i) => {
+          const x = -200 + (i % 6) * 50;
+          const y = -80 - Math.floor(i / 6) * 18;
+          return `<circle cx="${x}" cy="${y}" r="1.5" fill="${INK_3}" opacity="0.7"/>`;
+        })
+        .join("")}
+      <!-- volt volt swoosh-like side stripe -->
+      <path d="M -100 -60 C -40 -90, 80 -100, 200 -50"
+            fill="none" stroke="${accent}" stroke-width="6" stroke-linecap="round" opacity="0.9"/>
+    </g>`;
+}
+
+function trailPath(accent: string): string {
+  return `
+    <g>
+      <ellipse cx="0" cy="125" rx="330" ry="14" fill="#000" opacity="0.5"/>
+      <!-- aggressive lugged outsole -->
+      <path d="M -330 95
+               C -340 70, -330 50, -300 45
+               C -200 35, -80 25, 40 18
+               C 160 12, 280 22, 320 55
+               C 345 85, 335 115, 305 120
+               L -310 120
+               C -330 118, -340 110, -330 95 Z"
+            fill="${INK_2}" stroke="${INK_4}" stroke-width="1.5"/>
+      <!-- lugs (zigzag) -->
+      <path d="M -310 115 L -300 130 L -290 115 L -280 130 L -270 115 L -260 130 L -250 115 L -240 130 L -230 115 L -220 130 L -210 115 L -200 130 L -190 115 L -180 130 L -170 115 L -160 130 L -150 115 L -140 130 L -130 115 L -120 130 L -110 115 L -100 130 L -90 115 L -80 130 L -70 115 L -60 130 L -50 115 L -40 130 L -30 115 L -20 130 L -10 115 L 0 130 L 10 115 L 20 130 L 30 115 L 40 130 L 50 115 L 60 130 L 70 115 L 80 130 L 90 115 L 100 130 L 110 115 L 120 130 L 130 115 L 140 130 L 150 115 L 160 130 L 170 115 L 180 130 L 190 115 L 200 130 L 210 115 L 220 130 L 230 115 L 240 130 L 250 115 L 260 130 L 270 115 L 280 130 L 290 115 L 300 130"
+            fill="${INK_3}"/>
+      <!-- volt midsole stripe -->
+      <path d="M -300 60
+               C -200 40, -80 30, 40 22
+               C 160 16, 280 30, 315 60"
+            fill="none" stroke="${accent}" stroke-width="4"/>
+      <!-- upper: reinforced toe box -->
+      <path d="M 220 -100
+               C 280 -80, 315 -40, 312 0
+               C 310 25, 290 35, 260 30
+               C 230 28, 215 15, 215 -10
+               C 215 -50, 218 -85, 220 -100 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- upper main body (chunkier than road runner) -->
+      <path d="M -280 30
+               C -310 -5, -300 -50, -270 -75
+               C -210 -110, -120 -125, -40 -130
+               C 60 -135, 160 -130, 220 -100
+               C 240 -50, 240 0, 220 30
+               L -260 30
+               C -275 30, -285 28, -280 30 Z"
+            fill="${INK_1}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- gusseted tongue -->
+      <path d="M -40 -125
+               C -40 -150, 20 -160, 70 -158
+               C 120 -156, 140 -140, 130 -120
+               C 120 -105, 80 -95, 30 -95
+               C 0 -95, -40 -105, -40 -125 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- collar -->
+      <ellipse cx="0" cy="-135" rx="75" ry="20" fill="${INK_0}"/>
+      <!-- thick laces -->
+      <path d="M -40 -110 Q 0 -100 40 -110" stroke="${accent}" stroke-width="3" fill="none"/>
+      <path d="M 0 -118 Q 40 -108 80 -118" stroke="${accent}" stroke-width="3" fill="none"/>
+      <path d="M 40 -110 Q 80 -100 120 -110" stroke="${accent}" stroke-width="3" fill="none"/>
+      <!-- heel pull tab -->
+      <path d="M -310 -50 L -290 -50 L -290 -20 L -310 -20 Z" fill="${accent}"/>
+      <!-- rock plate indicator (volt patch) -->
+      <ellipse cx="-50" cy="40" rx="40" ry="10" fill="${accent}" opacity="0.5"/>
+    </g>`;
+}
+
+function trackPath(accent: string): string {
+  // Competition racing flat / spike - very low profile
+  return `
+    <g>
+      <ellipse cx="0" cy="80" rx="290" ry="10" fill="#000" opacity="0.5"/>
+      <!-- very thin midsole -->
+      <path d="M -300 60
+               C -310 40, -300 20, -270 15
+               C -180 0, -80 -8, 30 -15
+               C 140 -20, 250 -8, 290 15
+               C 315 35, 305 65, 280 70
+               L -280 70
+               C -298 68, -310 65, -300 60 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- spike pins -->
+      <g transform="translate(0 70)">
+        <line x1="-220" y1="0" x2="-200" y2="14" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+        <line x1="-130" y1="0" x2="-110" y2="14" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+        <line x1="-40" y1="0" x2="-20" y2="14" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+        <line x1="50" y1="0" x2="70" y2="14" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+        <line x1="140" y1="0" x2="160" y2="14" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+        <line x1="220" y1="0" x2="240" y2="14" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+      </g>
+      <!-- volt racing stripe -->
+      <path d="M -260 30
+               C -160 15, -40 5, 80 -2
+               C 180 -8, 250 0, 290 25"
+            fill="none" stroke="${accent}" stroke-width="3"/>
+      <!-- super thin upper -->
+      <path d="M -250 0
+               C -280 -30, -270 -70, -240 -90
+               C -180 -110, -100 -120, -20 -125
+               C 80 -128, 170 -120, 220 -100
+               C 250 -75, 260 -40, 250 -10
+               C 245 10, 230 18, 210 20
+               L -240 20
+               C -255 18, -262 12, -250 0 Z"
+            fill="${INK_1}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- volt carbon plate visible on top -->
+      <path d="M -100 -60 C -20 -90, 100 -100, 200 -80"
+            fill="none" stroke="${accent}" stroke-width="5" opacity="0.85"/>
+      <!-- tongue -->
+      <path d="M -20 -118
+               C -20 -135, 30 -140, 70 -138
+               C 100 -136, 110 -125, 100 -115
+               C 90 -108, 60 -100, 30 -100
+               C 0 -100, -20 -110, -20 -118 Z"
+            fill="${INK_1}" stroke="${INK_3}" stroke-width="1.2"/>
+      <!-- minimal collar -->
+      <ellipse cx="0" cy="-128" rx="50" ry="14" fill="${INK_0}"/>
+      <!-- no laces, single strap -->
+      <path d="M -10 -120 L 70 -120" stroke="${accent}" stroke-width="3" stroke-linecap="round"/>
+    </g>`;
+}
+
+function courtPath(accent: string): string {
+  // Classic court / low-top silhouette (Samba / Air Force style)
+  return `
+    <g>
+      <ellipse cx="0" cy="100" rx="300" ry="13" fill="#000" opacity="0.5"/>
+      <!-- gum-style midsole (slightly cream-ish at edges) -->
+      <path d="M -300 75
+               C -315 55, -305 30, -275 22
+               C -180 8, -80 0, 30 -8
+               C 140 -15, 250 -5, 290 25
+               C 315 50, 305 90, 280 95
+               L -285 95
+               C -300 92, -312 85, -300 75 Z"
+            fill="${INK_3}" stroke="${INK_4}" stroke-width="1.5"/>
+      <!-- gum sole bottom (lighter band) -->
+      <rect x="-280" y="80" width="560" height="14" fill="#E0D5BD" opacity="0.85"/>
+      <!-- volt mid stripe -->
+      <path d="M -270 45
+               C -180 30, -80 22, 30 15
+               C 140 8, 240 20, 280 40"
+            fill="none" stroke="${accent}" stroke-width="3"/>
+      <!-- upper: classic low-top, low ankle -->
+      <path d="M -270 18
+               C -290 -10, -280 -50, -250 -75
+               C -180 -100, -100 -110, -20 -115
+               C 80 -118, 170 -112, 230 -90
+               C 260 -65, 270 -30, 260 0
+               C 255 15, 240 22, 220 22
+               L -250 22
+               C -265 22, -275 20, -270 18 Z"
+            fill="${INK_1}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- toe cap with stitching -->
+      <path d="M 210 -90
+               C 250 -65, 265 -30, 260 0
+               C 255 15, 240 22, 215 22
+               C 200 18, 195 5, 200 -25
+               C 203 -55, 208 -75, 210 -90 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- stitching on toe cap -->
+      <path d="M 200 -25 C 210 -20, 220 -15, 230 -5" stroke="${accent}" stroke-width="1" fill="none" opacity="0.6" stroke-dasharray="3,2"/>
+      <!-- volt side stripes (Adidas-like) -->
+      <path d="M -100 -60 L 80 -55" stroke="${accent}" stroke-width="6" stroke-linecap="round"/>
+      <path d="M -110 -45 L 90 -40" stroke="${accent}" stroke-width="6" stroke-linecap="round"/>
+      <!-- eyestay panel -->
+      <path d="M -100 -100
+               C -100 -120, -20 -125, 60 -122
+               C 110 -120, 130 -108, 125 -95
+               C 120 -85, 80 -80, 20 -82
+               C -40 -84, -100 -90, -100 -100 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- eyelets -->
+      ${[-60, -20, 20, 60]
+        .map(
+          (x) =>
+            `<circle cx="${x}" cy="-100" r="3.5" fill="${INK_0}" stroke="${accent}" stroke-width="1.2"/>`,
+        )
+        .join("")}
+      <!-- collar padding (low for court shoe) -->
+      <ellipse cx="0" cy="-115" rx="60" ry="14" fill="${INK_0}"/>
+      <!-- heel tab -->
+      <rect x="-265" y="-65" width="12" height="20" rx="2" fill="${accent}"/>
+      <!-- stitched volt logo on heel -->
+      <text x="-205" y="-40" font-family="ui-monospace, monospace" font-size="14" fill="${accent}" letter-spacing="2">${accent === VOLT ? "KT" : "•"}</text>
+    </g>`;
+}
+
+function lifestylePath(accent: string): string {
+  // Low-profile canvas / knit lifestyle
+  return `
+    <g>
+      <ellipse cx="0" cy="100" rx="290" ry="12" fill="#000" opacity="0.5"/>
+      <!-- vulcanized cup sole -->
+      <path d="M -290 75
+               C -305 55, -295 30, -265 22
+               C -180 8, -80 0, 30 -8
+               C 140 -15, 245 -5, 280 25
+               C 305 50, 295 90, 270 95
+               L -280 95
+               C -295 92, -302 85, -290 75 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- foxing tape (white strip on vulcanized) -->
+      <rect x="-275" y="50" width="555" height="10" fill="${INK_3}"/>
+      <path d="M -275 50 C -180 38, -80 30, 30 24 C 140 18, 240 30, 275 50"
+            fill="none" stroke="${accent}" stroke-width="2"/>
+      <!-- upper: knit / canvas, simple -->
+      <path d="M -270 18
+               C -290 -10, -280 -50, -250 -72
+               C -180 -100, -100 -110, -20 -115
+               C 80 -118, 170 -112, 225 -90
+               C 255 -65, 265 -30, 255 0
+               C 250 15, 235 22, 215 22
+               L -250 22
+               C -265 22, -275 20, -270 18 Z"
+            fill="${INK_1}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- subtle knit texture -->
+      ${Array.from({ length: 30 })
+        .map((_, i) => {
+          const x = -240 + (i % 10) * 48;
+          const y = -100 + Math.floor(i / 10) * 25;
+          return `<line x1="${x}" y1="${y}" x2="${x + 30}" y2="${y + 5}" stroke="${INK_3}" stroke-width="0.8" opacity="0.5"/>`;
+        })
+        .join("")}
+      <!-- volt eyestay + swoop -->
+      <path d="M -120 -70 C -40 -95, 100 -100, 200 -60"
+            fill="none" stroke="${accent}" stroke-width="5" stroke-linecap="round" opacity="0.9"/>
+      <!-- eyestay panel -->
+      <path d="M -100 -100
+               C -100 -118, -20 -122, 60 -120
+               C 110 -118, 130 -108, 125 -95
+               C 120 -85, 80 -82, 20 -84
+               C -40 -86, -100 -92, -100 -100 Z"
+            fill="${INK_2}" stroke="${INK_3}" stroke-width="1.5"/>
+      <!-- eyelets -->
+      ${[-60, -20, 20, 60]
+        .map(
+          (x) =>
+            `<circle cx="${x}" cy="-100" r="3" fill="${INK_0}" stroke="${accent}" stroke-width="1"/>`,
+        )
+        .join("")}
+      <!-- laces -->
+      <path d="M -50 -100 L 60 -100" stroke="${accent}" stroke-width="2" opacity="0.7"/>
+      <path d="M -45 -110 L 50 -110" stroke="${accent}" stroke-width="2" opacity="0.7"/>
+      <!-- heel tab volt -->
+      <rect x="-265" y="-60" width="12" height="18" rx="2" fill="${accent}"/>
+    </g>`;
+}
+
+function silhouetteFor(p: Product, accent: string): string {
+  switch (p.category) {
+    case "running":
+      return runnerPath(accent);
+    case "trail":
+      return trailPath(accent);
+    case "track":
+      return trackPath(accent);
+    case "court":
+      return courtPath(accent);
+    case "lifestyle":
+    default:
+      return lifestylePath(accent);
+  }
 }
 
 export function productImageSvg(p: Product, w = 1600, h = 1600): string {
   const seed = hashString(p.id);
   const accent = pickAccent(seed, p.colorways);
-  const ink0 = "#0A0A0B";
-  const ink1 = "#101013";
-  const ink2 = "#161619";
-  const ink3 = "#1F1F24";
 
-  // Background gradient angle varies by product
-  const angle = (seed % 360) - 180;
-  // Number of "speed lines" varies
-  const lines = 6 + (seed % 8);
-  // Determine silhouette type
-  const type = ["runner", "trail", "court", "track", "lifestyle"][
-    p.category === "running"
-      ? 0
-      : p.category === "trail"
-        ? 1
-        : p.category === "court"
-          ? 2
-          : p.category === "track"
-            ? 3
-            : 4
-  ];
-
-  // Build silhouette path based on type
-  let silhouette = "";
-  if (type === "runner" || type === "trail" || type === "lifestyle") {
-    // Low-profile running shoe silhouette
-    silhouette = `
-      <g transform="translate(800 800)">
-        <path d="M -520 40
-                 C -520 -20, -480 -60, -400 -80
-                 C -280 -110, -180 -150, -80 -160
-                 C 40 -170, 160 -180, 280 -160
-                 C 380 -145, 460 -120, 500 -60
-                 C 540 0, 540 60, 500 100
-                 C 460 140, 380 150, 280 150
-                 L -480 150
-                 C -500 150, -520 130, -520 100 Z"
-              fill="${ink2}" stroke="${ink3}" stroke-width="3"/>
-        <path d="M -480 30 C -380 -10, -200 -60, 0 -80 C 200 -100, 360 -80, 480 -30"
-              fill="none" stroke="${accent}" stroke-width="6" opacity="0.85"/>
-        <path d="M -480 60 C -380 20, -200 -30, 0 -50 C 200 -70, 360 -50, 480 0"
-              fill="none" stroke="${accent}" stroke-width="3" opacity="0.4"/>
-        <ellipse cx="-280" cy="-40" rx="80" ry="30" fill="${ink3}" opacity="0.5"/>
-        <ellipse cx="100" cy="-60" rx="100" ry="35" fill="${ink3}" opacity="0.4"/>
-        <circle cx="-200" cy="0" r="3" fill="${accent}"/>
-        <circle cx="-100" cy="-20" r="3" fill="${accent}"/>
-        <circle cx="0" cy="-30" r="3" fill="${accent}"/>
-        <circle cx="100" cy="-40" r="3" fill="${accent}"/>
-      </g>`;
-  } else if (type === "court") {
-    // Mid-top silhouette
-    silhouette = `
-      <g transform="translate(800 800)">
-        <path d="M -480 0
-                 L -480 -200
-                 C -480 -240, -460 -270, -420 -280
-                 L -200 -310
-                 C -100 -320, 0 -320, 100 -310
-                 L 320 -280
-                 C 380 -270, 460 -250, 500 -200
-                 C 540 -140, 540 -40, 500 40
-                 C 460 120, 380 150, 280 150
-                 L -480 150
-                 C -500 150, -520 130, -520 100 Z"
-              fill="${ink2}" stroke="${ink3}" stroke-width="3"/>
-        <path d="M -480 -20 L 480 -20" stroke="${accent}" stroke-width="4" opacity="0.7"/>
-        <ellipse cx="-280" cy="-100" rx="60" ry="20" fill="${ink3}" opacity="0.5"/>
-        <ellipse cx="0" cy="-180" rx="100" ry="20" fill="${ink3}" opacity="0.4"/>
-        <rect x="-100" y="-260" width="200" height="6" fill="${accent}" opacity="0.5"/>
-      </g>`;
-  } else {
-    // Track spike
-    silhouette = `
-      <g transform="translate(800 800)">
-        <path d="M -500 60
-                 C -500 0, -460 -40, -380 -50
-                 C -260 -60, -160 -80, -60 -90
-                 C 60 -100, 180 -100, 280 -90
-                 C 360 -80, 420 -50, 440 0
-                 C 460 50, 440 90, 380 110
-                 L -460 130
-                 C -480 130, -500 110, -500 80 Z"
-              fill="${ink2}" stroke="${ink3}" stroke-width="3"/>
-        <path d="M -480 50 C -380 10, -200 -30, 0 -50 C 200 -70, 360 -50, 440 -10"
-              fill="none" stroke="${accent}" stroke-width="4" opacity="0.7"/>
-        <g transform="translate(0 130)">
-          <line x1="-400" y1="0" x2="-380" y2="40" stroke="${accent}" stroke-width="3"/>
-          <line x1="-300" y1="0" x2="-280" y2="40" stroke="${accent}" stroke-width="3"/>
-          <line x1="-200" y1="0" x2="-180" y2="40" stroke="${accent}" stroke-width="3"/>
-          <line x1="-100" y1="0" x2="-80" y2="40" stroke="${accent}" stroke-width="3"/>
-          <line x1="0" y1="0" x2="20" y2="40" stroke="${accent}" stroke-width="3"/>
-          <line x1="100" y1="0" x2="120" y2="40" stroke="${accent}" stroke-width="3"/>
-          <line x1="200" y1="0" x2="220" y2="40" stroke="${accent}" stroke-width="3"/>
-          <line x1="300" y1="0" x2="320" y2="40" stroke="${accent}" stroke-width="3"/>
-        </g>
-      </g>`;
-  }
-
-  // Atmospheric speed lines
-  const speedLines = Array.from({ length: lines })
+  // Atmospheric speed lines (more refined)
+  const lines = Array.from({ length: 8 })
     .map((_, i) => {
-      const y = 200 + i * 140 + (seed % 40);
-      const len = 200 + ((seed + i * 13) % 600);
-      const op = 0.05 + ((seed + i) % 10) / 60;
+      const y = 300 + i * 130 + (seed % 30);
+      const len = 200 + ((seed + i * 17) % 700);
+      const op = 0.04 + ((seed + i) % 8) / 90;
       return `<line x1="0" y1="${y}" x2="${len}" y2="${y}" stroke="${accent}" stroke-width="1" opacity="${op.toFixed(2)}"/>`;
     })
     .join("");
 
+  // Background grid (subtle)
+  const grid = Array.from({ length: 6 })
+    .map((_, i) => {
+      const y = 200 + i * 220;
+      return `<line x1="0" y1="${y}" x2="2400" y2="${y}" stroke="${INK_3}" stroke-width="0.5" opacity="0.3"/>`;
+    })
+    .join("");
+
+  const silhouette = silhouetteFor(p, accent);
+
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1600" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice">
   <defs>
-    <linearGradient id="bg-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%" gradientTransform="rotate(${angle} 0.5 0.5)">
-      <stop offset="0%" stop-color="${ink0}"/>
-      <stop offset="60%" stop-color="${ink1}"/>
-      <stop offset="100%" stop-color="${ink2}"/>
+    <linearGradient id="bg-${p.id}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${INK_0}"/>
+      <stop offset="60%" stop-color="${INK_1}"/>
+      <stop offset="100%" stop-color="${INK_2}"/>
     </linearGradient>
-    <radialGradient id="spot-${p.id}" cx="50%" cy="55%" r="50%">
-      <stop offset="0%" stop-color="${accent}" stop-opacity="0.12"/>
-      <stop offset="50%" stop-color="${accent}" stop-opacity="0.04"/>
+    <radialGradient id="spot-${p.id}" cx="55%" cy="50%" r="55%">
+      <stop offset="0%" stop-color="${accent}" stop-opacity="0.18"/>
+      <stop offset="50%" stop-color="${accent}" stop-opacity="0.06"/>
       <stop offset="100%" stop-color="${accent}" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="vignette-${p.id}" cx="50%" cy="50%" r="75%">
+      <stop offset="60%" stop-color="${INK_0}" stop-opacity="0"/>
+      <stop offset="100%" stop-color="${INK_0}" stop-opacity="0.5"/>
     </radialGradient>
   </defs>
   <rect width="1600" height="1600" fill="url(#bg-${p.id})"/>
+  <g opacity="0.5">${grid}</g>
+  <g opacity="0.5">${lines}</g>
   <rect width="1600" height="1600" fill="url(#spot-${p.id})"/>
-  <g opacity="0.6">${speedLines}</g>
-  ${silhouette}
-  <g opacity="0.4" font-family="ui-monospace, monospace" font-size="14" fill="${ink3}">
-    <text x="40" y="50" letter-spacing="3">${p.id.toUpperCase()}</text>
-    <text x="40" y="1560" letter-spacing="3">${p.category.toUpperCase()} / ${p.gender.toUpperCase()}</text>
-    <text x="1560" y="1560" letter-spacing="3" text-anchor="end">${p.weightGrams}G / ${p.drop}MM</text>
+  <g transform="translate(800 800) scale(1.5)">${silhouette}</g>
+  <rect width="1600" height="1600" fill="url(#vignette-${p.id})"/>
+  <g opacity="0.5" font-family="ui-monospace, monospace" fill="${PAPER_3}">
+    <text x="40" y="50" font-size="14" letter-spacing="3">${p.id.toUpperCase()}</text>
+    <text x="40" y="1560" font-size="14" letter-spacing="3">${p.brand.toUpperCase()} / ${p.category.toUpperCase()}</text>
+    <text x="1560" y="1560" font-size="14" letter-spacing="3" text-anchor="end">${p.weightGrams}G / ${p.drop}MM DROP</text>
   </g>
 </svg>`;
 
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
 }
 
-export function heroLifestyleSvg(w = 2400, h = 1350): string {
-  const accent = "#D7FF1E";
-  const ink0 = "#0A0A0B";
-  const ink1 = "#101013";
-  const ink2 = "#161619";
-
+export function heroLifestyleSvg(w = 1800, h = 2200): string {
+  // Hero silhouette: large runner in motion
   const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1350" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 2200" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice">
   <defs>
     <linearGradient id="hero-bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${ink0}"/>
-      <stop offset="50%" stop-color="${ink1}"/>
-      <stop offset="100%" stop-color="${ink2}"/>
+      <stop offset="0%" stop-color="${INK_0}"/>
+      <stop offset="50%" stop-color="${INK_1}"/>
+      <stop offset="100%" stop-color="${INK_2}"/>
     </linearGradient>
-    <radialGradient id="hero-spot" cx="60%" cy="40%" r="45%">
-      <stop offset="0%" stop-color="${accent}" stop-opacity="0.18"/>
-      <stop offset="60%" stop-color="${accent}" stop-opacity="0.04"/>
-      <stop offset="100%" stop-color="${accent}" stop-opacity="0"/>
+    <radialGradient id="hero-spot" cx="60%" cy="40%" r="50%">
+      <stop offset="0%" stop-color="${VOLT}" stop-opacity="0.22"/>
+      <stop offset="60%" stop-color="${VOLT}" stop-opacity="0.05"/>
+      <stop offset="100%" stop-color="${VOLT}" stop-opacity="0"/>
     </radialGradient>
   </defs>
-  <rect width="2400" height="1350" fill="url(#hero-bg)"/>
-  <rect width="2400" height="1350" fill="url(#hero-spot)"/>
-  <g opacity="0.5" stroke="${accent}" stroke-width="1" fill="none">
-    <line x1="0" y1="200" x2="2400" y2="200" opacity="0.08"/>
-    <line x1="0" y1="400" x2="2400" y2="400" opacity="0.06"/>
-    <line x1="0" y1="600" x2="2400" y2="600" opacity="0.05"/>
-    <line x1="0" y1="800" x2="2400" y2="800" opacity="0.04"/>
-    <line x1="0" y1="1000" x2="2400" y2="1000" opacity="0.03"/>
-  </g>
-  <g transform="translate(1500 700)">
-    <ellipse cx="0" cy="200" rx="500" ry="40" fill="#000" opacity="0.5"/>
-    <path d="M -380 60
-             C -380 -10, -340 -50, -260 -70
-             C -140 -100, -40 -130, 60 -140
-             C 180 -150, 300 -150, 420 -130
-             C 500 -120, 540 -90, 540 -30
-             C 540 30, 500 70, 440 100
-             C 380 130, 280 150, 160 150
-             L -340 150
-             C -360 150, -380 130, -380 100 Z"
-          fill="${ink2}" stroke="${ink2}" stroke-width="2"/>
-    <path d="M -340 50 C -240 10, -60 -40, 140 -60 C 280 -75, 420 -50, 500 0"
-          fill="none" stroke="${accent}" stroke-width="8" opacity="0.9"/>
-    <path d="M -340 80 C -240 40, -60 -10, 140 -30 C 280 -45, 420 -20, 500 30"
-          fill="none" stroke="${accent}" stroke-width="4" opacity="0.5"/>
-  </g>
-  <g opacity="0.6" font-family="ui-monospace, monospace" font-size="16" fill="${accent}" letter-spacing="4">
-    <text x="60" y="60">RUN / FIRST</text>
-    <text x="60" y="1300">VOLT 02 / KATOONI / KYOTO</text>
-  </g>
-</svg>`;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-}
-
-export function editorialSvg(variant: 1 | 2, w = 1800, h = 2400): string {
-  const accent = "#D7FF1E";
-  const ink0 = "#0A0A0B";
-  const ink1 = "#101013";
-  const seed = variant === 1 ? "EDITORIAL-1" : "EDITORIAL-2";
-  const h2 = variant === 1 ? 2400 : 1350;
-
-  if (variant === 2) {
-    // Track-at-night horizontal
-    const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 2400 1350" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="ed2-bg" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="${ink0}"/>
-      <stop offset="60%" stop-color="${ink1}"/>
-      <stop offset="100%" stop-color="${ink0}"/>
-    </linearGradient>
-    <radialGradient id="ed2-light" cx="20%" cy="30%" r="35%">
-      <stop offset="0%" stop-color="${accent}" stop-opacity="0.25"/>
-      <stop offset="100%" stop-color="${accent}" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="2400" height="1350" fill="url(#ed2-bg)"/>
-  <rect width="2400" height="1350" fill="url(#ed2-light)"/>
-  <g stroke="#1F1F24" stroke-width="1" opacity="0.5">
-    ${Array.from({ length: 12 })
-      .map((_, i) => {
-        const y = 100 + i * 100;
-        return `<line x1="0" y1="${y}" x2="2400" y2="${y}" opacity="${0.5 - i * 0.03}"/>`;
-      })
-      .join("")}
-  </g>
-  <g transform="translate(1700 850)">
-    <ellipse cx="0" cy="150" rx="350" ry="20" fill="#000" opacity="0.6"/>
-    <path d="M -260 40 C -260 -10, -220 -40, -160 -55 C -80 -75, 0 -90, 80 -90 C 160 -90, 220 -70, 240 -30 C 260 20, 230 50, 180 70 C 130 90, 60 100, -20 100 L -240 100 C -250 100, -260 90, -260 80 Z" fill="${ink1}" stroke="#1F1F24" stroke-width="2"/>
-    <path d="M -240 30 C -160 0, -40 -30, 80 -45 C 160 -55, 220 -30, 240 0" fill="none" stroke="${accent}" stroke-width="5" opacity="0.8"/>
-  </g>
-</svg>`;
-    return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
-  }
-
-  const svg = `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 2400" width="${w}" height="${h2}" preserveAspectRatio="xMidYMid slice">
-  <defs>
-    <linearGradient id="ed1-bg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${ink0}"/>
-      <stop offset="100%" stop-color="${ink1}"/>
-    </linearGradient>
-    <radialGradient id="ed1-spot" cx="40%" cy="50%" r="50%">
-      <stop offset="0%" stop-color="${accent}" stop-opacity="0.15"/>
-      <stop offset="100%" stop-color="${accent}" stop-opacity="0"/>
-    </radialGradient>
-  </defs>
-  <rect width="1800" height="2400" fill="url(#ed1-bg)"/>
-  <rect width="1800" height="2400" fill="url(#ed1-spot)"/>
-  <g stroke="#1F1F24" stroke-width="1" opacity="0.4">
-    <line x1="200" y1="0" x2="200" y2="2400"/>
-    <line x1="400" y1="0" x2="400" y2="2400"/>
-    <line x1="1600" y1="0" x2="1600" y2="2400"/>
-  </g>
-  <g transform="translate(900 1300)">
-    <ellipse cx="0" cy="200" rx="500" ry="30" fill="#000" opacity="0.5"/>
-    <path d="M -400 50 C -400 -20, -360 -60, -280 -80 C -160 -110, -60 -130, 60 -140 C 180 -150, 300 -150, 420 -130 C 500 -120, 540 -90, 540 -30 C 540 30, 500 70, 440 100 C 380 130, 280 150, 160 150 L -360 150 C -380 150, -400 130, -400 100 Z" fill="#161619" stroke="#1F1F24" stroke-width="2"/>
-    <path d="M -360 40 C -260 0, -80 -40, 120 -60 C 260 -75, 420 -50, 500 0" fill="none" stroke="${accent}" stroke-width="6" opacity="0.85"/>
-  </g>
-  <g opacity="0.5" font-family="ui-monospace, monospace" font-size="22" fill="${accent}" letter-spacing="6">
-    <text x="200" y="100">${seed}</text>
+  <rect width="1800" height="2200" fill="url(#hero-bg)"/>
+  <rect width="1800" height="2200" fill="url(#hero-spot)"/>
+  <g transform="translate(1100 1200) scale(2.2)">${runnerPath(VOLT)}</g>
+  <g opacity="0.45" font-family="ui-monospace, monospace" fill="${PAPER_2}">
+    <text x="60" y="80" font-size="20" letter-spacing="5">RUN / FIRST</text>
+    <text x="60" y="2120" font-size="20" letter-spacing="5">VOLT 02 / KATOONI / KYOTO</text>
   </g>
 </svg>`;
   return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
