@@ -1,12 +1,15 @@
 import type { Product } from "./product-types";
 import { productImageSvg } from "./product-svg";
 
-// All product images are generated as on-brand SVG silhouettes that
-// always load, no network. Each category has a distinct shoe-shape.
-// Replace with real photography (Picsum cannot be relied on for shoe
-// imagery from this environment).
+// Real photography lives in /public/products/{slug}.png. Products not in
+// this map fall back to the SVG generator so the catalog stays complete.
+const REAL_IMAGES: Record<string, string> = {
+  "kat-runner-volt": "/products/kat-runner-volt.png",
+  "kat-runner-cruiser": "/products/kat-runner-cruiser.png",
+};
+
 const img = (id: string): string => {
-  // Build a partial product shape so the SVG generator can read fields.
+  if (REAL_IMAGES[id]) return REAL_IMAGES[id];
   const partial: Product = {
     id,
     slug: id,
@@ -935,8 +938,26 @@ export function getFeaturedDrop(): Product {
   return [...pool].sort((a, b) => b.popularity - a.popularity)[0];
 }
 
+// Store preview slots are pinned to specific slugs so the four generated
+// store-preview-{1..4}.png shots land in the homepage grid in order.
+const STORE_PREVIEW_SLUGS = [
+  "kat-runner-volt",
+  "kat-runner-cruiser",
+  "kat-court-leather",
+  "nike-vaporfly-3",
+] as const;
+
+const STORE_PREVIEW_OVERRIDES: Record<string, string> = {
+  "kat-court-leather": "/images/store-preview-3.png",
+  "nike-vaporfly-3": "/images/store-preview-4.png",
+};
+
 export function getStorePreview(): Product[] {
-  return [...products]
-    .sort((a, b) => b.popularity - a.popularity)
-    .slice(0, 4);
+  return STORE_PREVIEW_SLUGS.map((slug) => {
+    const p = products.find((x) => x.slug === slug);
+    if (!p) throw new Error(`getStorePreview: missing slug ${slug}`);
+    return STORE_PREVIEW_OVERRIDES[slug]
+      ? { ...p, image: STORE_PREVIEW_OVERRIDES[slug] }
+      : p;
+  });
 }

@@ -6,7 +6,6 @@ import { useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { cn } from "@/lib/cn";
 import { formatPrice } from "@/lib/pricing";
-import { heroLifestyleSvg } from "@/lib/product-svg";
 
 export function HeroVisual() {
   const ref = useRef<HTMLDivElement>(null);
@@ -51,7 +50,7 @@ export function HeroVisual() {
         className="relative h-full w-full cursor-crosshair overflow-hidden rounded-card border border-ink-3 bg-ink-1"
       >
         <img
-          src={heroLifestyleSvg(1800, 2200)}
+          src="/images/hero-lifestyle.png"
           alt={t("tag")}
           className="h-full w-full object-cover"
           loading="eager"
