@@ -42,6 +42,10 @@ export async function generateMetadata({
   };
 }
 
+const VIDEO_PRELOAD = [
+  { href: "/video/orbit.mp4", as: "video", type: "video/mp4" },
+];
+
 export default async function LocaleLayout({
   children,
   params,
@@ -64,6 +68,11 @@ export default async function LocaleLayout({
       dir={dir}
       className={`${GeistSans.variable} ${GeistMono.variable} ${outfit.variable}`}
     >
+      <head>
+        {VIDEO_PRELOAD.map((l) => (
+          <link key={l.href} rel="preload" as={l.as} type={l.type} href={l.href} />
+        ))}
+      </head>
       <body className="bg-ink-0 text-paper-1 antialiased">
         <NextIntlClientProvider messages={messages} locale={locale}>
           <MotionConfig reducedMotion="user">

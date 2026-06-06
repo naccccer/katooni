@@ -7,7 +7,7 @@ import { charRise, stagger as staggerVariant } from "@/lib/motion-variants";
 type SplitRevealProps = {
   text: string;
   className?: string;
-  perChar?: boolean;
+  mode?: "char" | "word";
   delayChildren?: number;
   staggerChildren?: number;
 };
@@ -15,12 +15,12 @@ type SplitRevealProps = {
 export function SplitReveal({
   text,
   className,
-  perChar = false,
+  mode = "word",
   delayChildren = 0,
-  staggerChildren = 0.018,
+  staggerChildren = mode === "char" ? 0.018 : 0.08,
 }: SplitRevealProps) {
   const reduce = useReducedMotion();
-  const tokens = perChar ? Array.from(text) : text.split(" ");
+  const tokens = mode === "char" ? Array.from(text) : text.split(" ");
 
   if (reduce) {
     return <span className={className}>{text}</span>;
@@ -39,11 +39,10 @@ export function SplitReveal({
         <span
           key={i}
           className="inline-block overflow-hidden align-baseline"
-          style={{ paddingBottom: perChar && /[gyjpq]/.test(t) ? "0.08em" : undefined }}
         >
           <motion.span variants={charRise} className="inline-block">
-            {t === " " ? " " : t}
-            {perChar ? "" : i < tokens.length - 1 ? " " : ""}
+            {t === " " ? " " : t}
+            {mode === "word" && i < tokens.length - 1 ? " " : ""}
           </motion.span>
         </span>
       ))}

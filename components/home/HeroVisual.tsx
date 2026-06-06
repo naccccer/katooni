@@ -62,7 +62,7 @@ export function HeroVisual() {
       <div
         aria-hidden
         className={cn(
-          "absolute -bottom-4 end-4 hidden h-12 items-center gap-2 rounded-pill bg-volt-500 px-4 text-xs font-medium uppercase tracking-[0.18em] text-ink-0 md:inline-flex",
+          "absolute -bottom-4 end-4 hidden h-12 shrink-0 items-center gap-2 whitespace-nowrap rounded-pill bg-volt-500 px-4 text-xs font-medium uppercase tracking-[0.18em] text-ink-0 md:inline-flex",
         )}
       >
         Volt 02

@@ -23,13 +23,13 @@ export function HeroCopy() {
 
       <h1 className="text-display-xl font-display text-paper-1">
         <span className="block">
-          <SplitReveal text={t("line1")} delayChildren={0.05} perChar />
+          <SplitReveal text={t("line1")} mode="word" delayChildren={0.05} />
         </span>
         <span className="block">
-          <SplitReveal text={t("line2")} delayChildren={0.15} perChar />
+          <SplitReveal text={t("line2")} mode="word" delayChildren={0.15} />
         </span>
         <span className="block text-volt-500">
-          <SplitReveal text={t("line3")} delayChildren={0.3} perChar />
+          <SplitReveal text={t("line3")} mode="word" delayChildren={0.3} />
         </span>
       </h1>
 

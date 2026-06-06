@@ -1,128 +1,76 @@
-// Library: motion/react only. Pinned section that mounts the 3D Canvas.
-// Lazy-loads the heavy three bundle on the client only.
+// Library: motion/react only. Scroll-scrubbed video: as the user scrolls
+// through the section, the video's currentTime advances from 0 to duration.
+// The video element is sticky; the surrounding section is 300dvh tall.
 "use client";
 
-import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "motion/react";
-import { useTranslations } from "next-intl";
-import { useLocale } from "next-intl";
-import { Eyebrow } from "@/components/primitives/Eyebrow";
+import { useRef } from "react";
+import { useScroll, useTransform, useMotionValueEvent, useReducedMotion } from "motion/react";
 
-const ShoeScene = dynamic(
-  () => import("@/components/three/ShoeScene").then((m) => m.ShoeScene),
-  {
-    ssr: false,
-    loading: () => <SceneSkeleton />,
-  },
-);
-
-function SceneSkeleton() {
-  return (
-    <div className="absolute inset-0 grid place-items-center">
-      <div className="relative aspect-square w-[68%]">
-        <div className="absolute inset-0 animate-pulse rounded-card border border-ink-3 bg-ink-1" />
-        <div className="absolute inset-6 animate-pulse rounded-input border border-ink-3 bg-ink-2" />
-        <div className="absolute inset-0 grid place-items-center">
-          <span className="font-display text-display-md text-volt-500">KT</span>
-        </div>
-      </div>
-    </div>
-  );
-}
+const VIDEO_SRC = "/video/orbit.mp4";
+const POSTER = "/images/hero-lifestyle.png";
+const SECTION_VH = 300; // total scroll distance for the section
 
 export function ShoeScrollCinematic() {
-  const [reduce, setReduce] = useState(false);
-  const [isDesktop, setIsDesktop] = useState(true);
-  const t = useTranslations("editorial");
-  const locale = useLocale();
-  const motionPref = useReducedMotion();
+  const sectionRef = useRef<HTMLElement>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const reduce = useReducedMotion();
 
-  useEffect(() => {
-    setReduce(motionPref ?? false);
-    const mq = window.matchMedia("(min-width: 768px)");
-    const onChange = () => setIsDesktop(mq.matches);
-    onChange();
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, [motionPref]);
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start start", "end end"],
+  });
+  // Throttle the time value to 0..1 progress
+  const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
 
-  const showCanvas = isDesktop && !reduce;
-
-  const steps = [
-    {
-      eyebrow: t("step1Eyebrow"),
-      title: t("step1Title"),
-      body: t("step1Body"),
-      accent: t("step1Accent"),
-    },
-    {
-      eyebrow: t("step2Eyebrow"),
-      title: t("step2Title"),
-      body: t("step2Body"),
-      accent: t("step2Accent"),
-    },
-    {
-      eyebrow: t("step3Eyebrow"),
-      title: t("step3Title"),
-      body: t("step3Body"),
-      accent: t("step3Accent"),
-    },
-  ];
+  useMotionValueEvent(progress, "change", (v) => {
+    const v0 = videoRef.current;
+    if (!v0 || !v0.duration || !isFinite(v0.duration)) return;
+    const target = v * v0.duration;
+    // Avoid no-op writes that can stutter on some browsers
+    if (Math.abs(v0.currentTime - target) > 0.01) {
+      v0.currentTime = target;
+    }
+  });
 
   return (
     <section
-      aria-label="How a Katooni is built"
-      className="relative h-[100dvh] overflow-hidden bg-ink-0"
+      ref={sectionRef}
+      aria-label="Orbit"
+      className="relative bg-ink-0"
+      style={{ height: `${SECTION_VH}dvh` }}
     >
-      <div className="absolute inset-0 grid grid-cols-1 md:grid-cols-12">
-        <div className="relative md:col-span-7">
-          {steps.map((step, i) => (
-            <div
-              key={step.eyebrow}
-              className="absolute inset-0 flex flex-col justify-center px-6 py-12 md:px-16"
-            >
-              <Eyebrow tone="volt" className="text-volt-500">
-                <span className="h-1.5 w-1.5 rounded-full bg-volt-500" />
-                {step.eyebrow}
-              </Eyebrow>
-              <motion.h3
-                className="text-display-md font-display mt-6 max-w-[20ch] text-paper-1"
-                initial={{ opacity: 0, y: 18 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                key={i}
-              >
-                {step.title}
-              </motion.h3>
-              <motion.p
-                className="mt-6 max-w-[44ch] text-base text-paper-2 md:text-lg"
-                initial={{ opacity: 0, y: 12 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: false, amount: 0.5 }}
-                transition={{ duration: 0.6, delay: 0.1 }}
-              >
-                {step.body}
-              </motion.p>
-              <div className="mt-10 flex items-center gap-3 text-xs uppercase tracking-[0.18em] text-paper-3">
-                <span className="font-mono">{step.accent}</span>
-                <span aria-hidden className="h-px w-8 bg-ink-3" />
-                <span className="font-mono">
-                  Step {i + 1} / {steps.length}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
+      <div className="sticky top-0 h-[100dvh] w-full overflow-hidden">
+        {reduce ? (
+          <img
+            src={POSTER}
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        ) : (
+          <video
+            ref={videoRef}
+            src={VIDEO_SRC}
+            poster={POSTER}
+            muted
+            playsInline
+            preload="auto"
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+        )}
 
-        <div className="relative hidden md:col-span-5 md:block">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_30%,rgba(215,255,30,0.18),transparent_60%)]" />
-          {showCanvas ? (
-            <ShoeScene />
-          ) : (
-            <SceneSkeleton />
-          )}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-gradient-to-b from-ink-0/40 via-transparent to-ink-0/60"
+        />
+
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-10 flex items-start justify-between p-6 md:p-10">
+          <div className="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.18em] text-paper-2">
+            <span className="h-1.5 w-1.5 rounded-full bg-volt-500" />
+            <span>Run log / Orbit 01</span>
+          </div>
+          <div className="hidden font-mono text-[11px] uppercase tracking-[0.18em] text-paper-3 md:block">
+            Scroll to rotate
+          </div>
         </div>
       </div>
     </section>

@@ -1,7 +1,9 @@
 import { defineRouting } from "next-intl/routing";
 
+// Katooni ships Farsi-only. EN text remains in messages/en.json for
+// aesthetic / decorative use but is not routed.
 export const routing = defineRouting({
-  locales: ["fa", "en"] as const,
+  locales: ["fa"] as const,
   defaultLocale: "fa",
   localePrefix: "always",
 });
