@@ -9,8 +9,8 @@ import { notFound } from "next/navigation";
 import { SiteHeader } from "@/components/chrome/SiteHeader";
 import { SiteFooter } from "@/components/chrome/SiteFooter";
 import { routing, isRtl } from "@/i18n/routing";
-import "./globals.css";
-import "./fonts.css";
+import "../styles/globals.css";
+import "../styles/fonts.css";
 
 const outfit = Outfit({
   variable: "--font-cabinet",

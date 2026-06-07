@@ -1,0 +1,26 @@
+/* Root styles for the OVALA landing at /.
+   The locale layout (app/[locale]/layout.tsx) owns the main globals.css;
+   this file only ensures the root page has the same dark/ink baseline even
+   if visited without locale. */
+
+html,
+body {
+  background: var(--color-ink-0, #0a0a0b);
+  color: var(--color-paper-1, #f5f5f2);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100dvh;
+  overflow-x: hidden;
+  font-family: var(--font-vazirmatn), var(--font-geist), system-ui, sans-serif;
+}
+
+::selection {
+  background: var(--color-volt-500, #d7ff1e);
+  color: var(--color-ink-0, #0a0a0b);
+}

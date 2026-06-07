@@ -1,0 +1,191 @@
+@import "tailwindcss";
+
+@theme {
+  /* Color: dark ink scale (true black to match hero video backgrounds) */
+  --color-ink-0: #000000;
+  --color-ink-1: #0a0a0c;
+  --color-ink-2: #141418;
+  --color-ink-3: #1f1f24;
+
+  /* Color: paper (text on dark) */
+  --color-paper-1: #f5f5f2;
+  --color-paper-2: #a8a8a4;
+  --color-paper-3: #6e6e6a;
+
+  /* Accent: electric volt */
+  --color-volt-500: #d7ff1e;
+  --color-volt-600: #b8e000;
+
+  /* Signal */
+  --color-signal-err: #ff4d4d;
+
+  /* Fonts: EN (Outfit display, Geist body) */
+  --font-display: var(--font-cabinet), system-ui, sans-serif;
+  --font-sans: var(--font-geist), system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Fonts: FA (Kalameh display, Vazirmatn body) */
+  --font-kalameh: "Kalameh", "Kalameh Fallback", system-ui, sans-serif;
+  --font-vazirmatn: "Vazirmatn", "Vazirmatn Fallback", system-ui, sans-serif;
+
+  /* Radii: locked scale */
+  --radius-pill: 9999px;
+  --radius-card: 16px;
+  --radius-input: 4px;
+  --radius-zero: 0;
+
+  /* Container */
+  --container-max: 1440px;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html,
+  body {
+    background: var(--color-ink-0);
+    color: var(--color-paper-1);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Farsi mode: rebind Tailwind font tokens so every utility (font-sans, font-mono, font-display) resolves to a Farsi font */
+  html[lang="fa"] {
+    --font-sans: var(--font-vazirmatn);
+    --font-mono: var(--font-vazirmatn);
+    --font-display: var(--font-kalameh);
+  }
+
+  /* Body gets Vazirmatn explicitly so children without utility classes still render in Farsi */
+  html[lang="fa"] body {
+    font-family: var(--font-vazirmatn);
+  }
+
+  body {
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-volt-500);
+    color: var(--color-ink-0);
+  }
+
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-volt-500);
+    outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.02em;
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+
+  .container-x {
+    width: 100%;
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: clamp(16px, 4vw, 64px);
+  }
+
+  .eyebrow {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    color: var(--color-paper-3);
+  }
+
+  /* In Farsi, mono labels look better at a slightly heavier weight */
+  html[lang="fa"] .eyebrow {
+    font-weight: 500;
+    letter-spacing: 0;
+  }
+
+  .text-display-xl {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(56px, 8vw, 140px);
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .text-display-lg {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(36px, 4.5vw, 76px);
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+  }
+
+  .text-display-md {
+    font-family: var(--font-display);
+    font-weight: 600;
+    font-size: clamp(24px, 3vw, 48px);
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  /* In Farsi: heavier weight, no negative tracking, looser line-height for vertical balance */
+  html[lang="fa"] .text-display-xl {
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1.15;
+    font-size: clamp(54px, 7.5vw, 124px);
+    word-spacing: -0.05em;
+  }
+  html[lang="fa"] .text-display-lg {
+    font-weight: 900;
+    letter-spacing: 0;
+    line-height: 1.2;
+    font-size: clamp(34px, 4.2vw, 68px);
+    word-spacing: -0.04em;
+  }
+  html[lang="fa"] .text-display-md {
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.3;
+    word-spacing: -0.03em;
+  }
+
+  /* Farsi display: never break a word or push the trailing period to a new line */
+  html[lang="fa"] .text-display-xl,
+  html[lang="fa"] .text-display-lg,
+  html[lang="fa"] .text-display-md {
+    word-break: keep-all;
+    overflow-wrap: normal;
+    line-break: strict;
+  }
+
+  .hairline {
+    background: var(--color-ink-3);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
